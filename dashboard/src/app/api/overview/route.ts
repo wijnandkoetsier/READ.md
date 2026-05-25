@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMockOverview } from '@/lib/mock/data';
+import { getBeddenreusOverview } from '@/lib/beddenreus/data';
+import type { PeriodKey } from '@/types/dashboard';
+
+const VALID_PERIODS: PeriodKey[] = ['this-month', 'this-week', 'last-week', 'last-month'];
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const currentStart = searchParams.get('cs');
-  const currentEnd = searchParams.get('ce');
-  const previousStart = searchParams.get('ps');
-  const previousEnd = searchParams.get('pe');
+  const period = searchParams.get('period') as PeriodKey | null;
 
-  if (!currentStart || !currentEnd || !previousStart || !previousEnd) {
-    return NextResponse.json({ error: 'Missing date parameters' }, { status: 400 });
+  if (!period || !VALID_PERIODS.includes(period)) {
+    return NextResponse.json({ error: 'Invalid or missing period parameter' }, { status: 400 });
   }
 
-  const data = getMockOverview(currentStart, currentEnd, previousStart, previousEnd);
+  const data = getBeddenreusOverview(period);
   return NextResponse.json(data);
 }

@@ -5,9 +5,9 @@ import type { OverviewResponse, BreakdownResponse, PeriodKey } from '@/types/das
 import { getPeriodRanges } from '@/lib/date-utils';
 
 async function fetchOverview(
-  cs: string, ce: string, ps: string, pe: string
+  cs: string, ce: string, ps: string, pe: string, period: PeriodKey
 ): Promise<OverviewResponse> {
-  const params = new URLSearchParams({ cs, ce, ps, pe });
+  const params = new URLSearchParams({ cs, ce, ps, pe, period });
   const res = await fetch(`/api/overview?${params}`);
   if (!res.ok) throw new Error('Failed to fetch overview');
   return res.json();
@@ -30,13 +30,13 @@ export function useOverviewData(period: PeriodKey) {
   };
 
   const overview = useQuery({
-    queryKey: ['overview', cs, ce, ps, pe],
-    queryFn: () => fetchOverview(cs, ce, ps, pe),
+    queryKey: ['overview', period],
+    queryFn: () => fetchOverview(cs, ce, ps, pe, period),
     staleTime: 2 * 60 * 1000,
   });
 
   const breakdown = useQuery({
-    queryKey: ['breakdown', cs, ce],
+    queryKey: ['breakdown'],
     queryFn: () => fetchBreakdown(cs, ce),
     staleTime: 2 * 60 * 1000,
   });
