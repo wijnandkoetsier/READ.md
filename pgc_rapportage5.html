@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pure Goat Company — Performance Dashboard</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --navy:   #244a71;
+  --navy-d: #1a3654;
+  --ice:    #bed8da;
+  --ice-l:  #e8f4f5;
+  --bg:     #f2f5f8;
+  --white:  #ffffff;
+  --text:   #1c2e40;
+  --muted:  #7a95a8;
+  --border: #dde8ee;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg); color: var(--text);
+  max-width: 430px; margin: 0 auto; padding-bottom: 48px;
+}
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--navy);
+  padding: 20px 18px 18px; color: var(--white); position: relative; overflow: hidden;
+}
+.hdr::before {
+  content:''; position:absolute; right:-50px; top:-50px;
+  width:180px; height:180px; border-radius:50%;
+  background:rgba(190,216,218,.1); pointer-events:none;
+}
+.hdr-logo { height:32px; display:block; margin-bottom:14px; filter:brightness(0) invert(1); }
+.hdr-period {
+  display:flex; align-items:center; gap:7px;
+  font-size:11px; color:var(--ice); opacity:.9;
+}
+.hdr-dot { width:6px; height:6px; border-radius:50%; background:var(--ice); flex-shrink:0; }
+
+/* ── TABS ── */
+.tabs {
+  display:flex; margin:14px 12px 0; background:var(--white);
+  border-radius:10px; padding:3px; gap:3px; border:1px solid var(--border);
+}
+.tab-btn {
+  flex:1; padding:8px 4px; border:none; background:transparent;
+  font-size:11px; font-weight:600; color:var(--muted);
+  border-radius:8px; cursor:pointer; transition:all .2s;
+}
+.tab-btn.active { background:var(--navy); color:var(--white); }
+
+/* ── KPI STRIP (inside each tab) ── */
+.tab-hdr {
+  margin:12px 12px 0; border-radius:12px; overflow:hidden;
+  border:1px solid var(--border); background:var(--white);
+  box-shadow:0 1px 3px rgba(36,74,113,.06);
+}
+.src-row {
+  display:flex; gap:5px; flex-wrap:wrap;
+  padding:10px 12px 8px; border-bottom:1px solid var(--border);
+}
+.src-badge {
+  font-size:9px; font-weight:700; padding:2px 7px; border-radius:10px;
+  display:inline-flex; align-items:center; gap:3px;
+}
+.sb-gads { background:#e8f0fb; color:#1a4fa0; }
+.sb-ga4  { background:#e6f6ee; color:#1a7a45; }
+.kpi-strip {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+}
+.kc { padding:11px 6px; text-align:center; border-right:1px solid var(--border); }
+.kc:last-child { border-right:none; }
+.kc .kl { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+.kc .kv { font-size:17px; font-weight:700; color:var(--navy); margin-top:3px; }
+.kc .kd { font-size:10px; margin-top:3px; }
+.dp { color:#0a7c6e; } .dn { color:#c0392b; }
+
+/* ── SECTION LABEL ── */
+.sec-lbl {
+  font-size:10px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.7px; padding:16px 16px 7px;
+}
+
+/* ── CARDS ── */
+.card {
+  background:var(--white); margin:0 12px 7px; border-radius:13px;
+  overflow:hidden; box-shadow:0 1px 3px rgba(36,74,113,.07);
+  border:1px solid var(--border); position:relative;
+}
+.card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:var(--ice); opacity:0; transition:opacity .2s;
+  border-radius:0 2px 2px 0;
+}
+.card.open::before { opacity:1; }
+.card-hdr {
+  display:flex; align-items:center; padding:13px 13px 13px 14px;
+  cursor:pointer; user-select:none;
+}
+.card-hdr:active { background:var(--ice-l); }
+.flag { flex-shrink:0; margin-right:11px; line-height:1; font-size:22px; }
+img.flag { height:22px; width:auto; border-radius:3px; }
+.cs { flex:1; min-width:0; }
+.cn {
+  font-size:14px; font-weight:700; color:var(--navy); margin-bottom:8px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.mr { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px; }
+.mc { text-align:center; }
+.mc .ml { font-size:8.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.3px; }
+.mc .mv { font-size:12.5px; font-weight:700; color:var(--navy); margin-top:2px; }
+.chev {
+  flex-shrink:0; margin-left:8px; width:20px; height:20px; border-radius:50%;
+  background:var(--ice-l); display:flex; align-items:center; justify-content:center;
+  color:var(--navy); font-size:10px; transition:transform .25s, background .2s;
+}
+.card.open .chev { transform:rotate(180deg); background:var(--ice); }
+.cd { max-height:0; overflow:hidden; transition:max-height .35s ease; }
+.card.open .cd { max-height:800px; }
+.di { border-top:1px solid var(--ice-l); padding:0 14px 13px; background:var(--ice-l); }
+.dh {
+  display:grid; grid-template-columns:1fr 1fr 1fr 60px;
+  gap:3px; padding:9px 0 6px;
+  font-size:9px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--ice);
+}
+.dh span:not(:first-child) { text-align:right; }
+.dh .hcur { color:var(--navy); }
+.dr {
+  display:grid; grid-template-columns:1fr 1fr 1fr 60px;
+  gap:3px; padding:8px 0; font-size:12.5px; align-items:center;
+  border-bottom:1px solid rgba(190,216,218,.3);
+}
+.dr:last-child { border-bottom:none; }
+.dr .rl { font-size:11px; color:var(--muted); }
+.dr span:not(:first-child) { text-align:right; font-variant-numeric:tabular-nums; }
+.dr .bv { color:var(--muted); font-size:11.5px; }
+.dr .av { color:var(--navy); font-weight:700; }
+.dl { font-size:11px; font-weight:700; }
+.pos { color:#0a7c6e; } .neg { color:#c0392b; } .neu { color:var(--muted); }
+.rb { display:inline-block; padding:2px 7px; border-radius:20px; font-size:11.5px; font-weight:700; }
+.rh  { background:#d1f5f0; color:#0d6e62; }
+.rg  { background:var(--ice-l); color:var(--navy); }
+.ro  { background:#e8eef5; color:var(--navy); border:1px solid var(--border); }
+.rl2 { background:#fee2e2; color:#991b1b; }
+.card.ov .cn { color:var(--muted); }
+.card.ov .mv { color:var(--muted); }
+.legend { display:flex; gap:5px; flex-wrap:wrap; padding:4px 16px 12px; justify-content:center; }
+.legend .rb { font-size:9.5px; }
+.footer { padding:20px 16px 0; font-size:10.5px; color:var(--muted); text-align:center; line-height:1.7; }
+.ftr-logo { height:20px; opacity:.35; display:block; margin:0 auto 7px; }
+.panel { display:none; }
+.panel.active { display:block; }
+
+/* ── VIEW TOGGLE ── */
+.view-toggle { display:flex; justify-content:flex-end; padding:6px 12px 0; gap:5px; }
+.vt-btn {
+  font-size:10px; font-weight:700; padding:4px 11px; border-radius:20px;
+  border:1px solid var(--border); background:var(--white); color:var(--muted);
+  cursor:pointer; transition:all .2s;
+}
+.vt-btn.active { background:var(--navy); color:var(--white); border-color:var(--navy); }
+
+/* ── DESKTOP VIEW ── */
+body.dv { max-width:1100px; }
+.dt { display:none; margin:8px 12px 7px; }
+body.dv .dt { display:block; }
+body.dv .card { display:none !important; }
+body.dv .sec-lbl { display:none; }
+.dt table {
+  width:100%; border-collapse:collapse; background:var(--white);
+  border-radius:12px; overflow:hidden; border:1px solid var(--border);
+  box-shadow:0 1px 3px rgba(36,74,113,.07);
+}
+.dt thead tr { background:var(--ice-l); }
+.dt th {
+  padding:10px 16px; font-size:9.5px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.5px;
+  border-bottom:2px solid var(--border); white-space:nowrap; text-align:right;
+}
+.dt th:first-child { text-align:left; }
+.dt td {
+  padding:10px 16px; border-bottom:1px solid var(--ice-l);
+  vertical-align:middle; text-align:right; font-size:13px;
+}
+.dt td:first-child { text-align:left; }
+.dt tfoot td { border-top:2px solid var(--border); border-bottom:none; background:var(--ice-l); }
+.dt tbody tr:hover td { background:rgba(190,216,218,.12); }
+.dt .tland { display:flex; align-items:center; gap:10px; }
+.dt .tfl { font-size:18px; line-height:1; flex-shrink:0; }
+.dt img.tfl { height:17px; width:auto; border-radius:2px; vertical-align:middle; }
+.dt .tcn { font-weight:700; font-size:13.5px; color:var(--navy); }
+.dt .tval { font-weight:700; color:var(--navy); font-variant-numeric:tabular-nums; }
+.dt .tprev { font-size:10.5px; color:var(--muted); margin-top:3px; font-variant-numeric:tabular-nums; }
+.dt .tdp { color:#0a7c6e; font-weight:700; }
+.dt .tdn { color:#c0392b; font-weight:700; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <img class="hdr-logo"
+    src="https://puregoatcompany.com/cdn/shop/files/logo_3_210x.png?v=1668428731"
+    alt="Pure Goat Company" onerror="this.style.display='none'">
+  <div class="hdr-period">
+    <div class="hdr-dot"></div>
+    Afgelopen 30 dagen: 2 mei – 31 mei 2026 &nbsp;·&nbsp; vs 2 apr – 1 mei
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('ga4',this)">📈&nbsp; GA4 · Omzet</button>
+  <button class="tab-btn" onclick="showTab('ads',this)">📊&nbsp; Google Ads · Omzet</button>
+  <button class="tab-btn" onclick="showTab('week',this)">🗓&nbsp; Omzet · Last week</button>
+</div>
+<!-- VIEW TOGGLE -->
+<div class="view-toggle">
+  <button class="vt-btn active" id="vt-mob" onclick="setView('mobile')">📱 Mobiel</button>
+  <button class="vt-btn" id="vt-dsk" onclick="setView('desktop')">🖥 Desktop</button>
+</div>
+
+<!-- ══════════════ TAB: GA4 ══════════════ -->
+<div id="tab-ga4" class="panel active">
+
+<div class="tab-hdr">
+  <div class="src-row">
+    <span class="src-badge sb-gads">Google Ads · kosten</span>
+    <span class="src-badge sb-ga4">GA4 Elevar · omzet &amp; transacties (google/cpc)</span>
+  </div>
+  <div class="kpi-strip">
+    <div class="kc">
+      <div class="kl">Kosten</div>
+      <div class="kv">€10.979</div>
+      <div class="kd dn">▲ +3%</div>
+    </div>
+    <div class="kc">
+      <div class="kl">Omzet GA4</div>
+      <div class="kv">€39.285</div>
+      <div class="kd dp">▲ +1%</div>
+    </div>
+    <div class="kc">
+      <div class="kl">ROAS</div>
+      <div class="kv">3,58x</div>
+      <div class="kd dn">▼ -2%</div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-lbl">Per land — tik om vergelijking te zien</div>
+
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/nl.png" alt="NL"><div class="cs">
+    <div class="cn">Nederland</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€2.944</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€13.116</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rg">4,46x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€2.850</span><span class="av">€2.944</span><span class="dl neg">+€94</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">212</span><span class="av">202</span><span class="dl neg">-10</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€15.066</span><span class="av">€13.116</span><span class="dl neg">-€1.950</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">5,29x</span></span><span><span class="rb rg">4,46x</span></span><span class="dl neg">-0,83</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/de.png" alt="DE"><div class="cs">
+    <div class="cn">Duitsland</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€789</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€5.814</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh">7,37x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€629</span><span class="av">€789</span><span class="dl neg">+€160</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">67</span><span class="av">54</span><span class="dl neg">-13</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€6.456</span><span class="av">€5.814</span><span class="dl neg">-€642</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">10,26x</span></span><span><span class="rb rh">7,37x</span></span><span class="dl neg">-2,90</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/at.png" alt="AT"><div class="cs">
+    <div class="cn">Oostenrijk</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€1.106</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€3.185</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb ro">2,88x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€1.048</span><span class="av">€1.106</span><span class="dl neg">+€58</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">31</span><span class="av">42</span><span class="dl pos">+11</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€2.892</span><span class="av">€3.185</span><span class="dl pos">+€293</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb ro">2,76x</span></span><span><span class="rb ro">2,88x</span></span><span class="dl pos">+0,12</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/be.png" alt="BE"><div class="cs">
+    <div class="cn">België</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€2.218</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€5.772</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb ro">2,60x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€1.552</span><span class="av">€2.218</span><span class="dl neg">+€666</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">86</span><span class="av">101</span><span class="dl pos">+15</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€4.662</span><span class="av">€5.772</span><span class="dl pos">+€1.110</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rg">3,00x</span></span><span><span class="rb ro">2,60x</span></span><span class="dl neg">-0,40</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/fr.png" alt="FR"><div class="cs">
+    <div class="cn">Frankrijk</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€186</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€1.575</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh">8,47x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€191</span><span class="av">€186</span><span class="dl pos">-€5</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">23</span><span class="av">16</span><span class="dl neg">-7</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€1.817</span><span class="av">€1.575</span><span class="dl neg">-€242</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">9,51x</span></span><span><span class="rb rh">8,47x</span></span><span class="dl neg">-1,05</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/es.png" alt="ES"><div class="cs">
+    <div class="cn">Spanje</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€1.164</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€2.603</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb ro">2,24x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€1.042</span><span class="av">€1.164</span><span class="dl neg">+€122</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">40</span><span class="av">48</span><span class="dl pos">+8</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€2.290</span><span class="av">€2.603</span><span class="dl pos">+€313</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb ro">2,20x</span></span><span><span class="rb ro">2,24x</span></span><span class="dl pos">+0,04</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/gb.png" alt="GB"><div class="cs">
+    <div class="cn">VK</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€1.290</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€2.536</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rl2">1,97x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€1.367</span><span class="av">€1.290</span><span class="dl pos">-€77</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">49</span><span class="av">47</span><span class="dl neg">-2</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€2.381</span><span class="av">€2.536</span><span class="dl pos">+€155</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rl2">1,74x</span></span><span><span class="rb rl2">1,97x</span></span><span class="dl pos">+0,22</span></div>
+  </div></div>
+</div>
+<div class="card ov" onclick="tog(this)">
+  <div class="card-hdr"><span class="flag">🌍</span><div class="cs">
+    <div class="cn">Overig</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€1.281</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€4.685</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rg" style="opacity:.7">3,66x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€2.003</span><span class="av">€1.281</span><span class="dl pos">-€722</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">41</span><span class="av">43</span><span class="dl pos">+2</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€3.388</span><span class="av">€4.685</span><span class="dl pos">+€1.297</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rl2" style="opacity:.7">1,69x</span></span><span><span class="rb rg" style="opacity:.7">3,66x</span></span><span class="dl pos">+1,97</span></div>
+  </div></div>
+</div>
+
+<div class="dt">
+  <table>
+    <thead><tr>
+      <th>Land</th><th>Kosten</th><th>Transacties</th><th>Omzet GA4</th><th>ROAS</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/nl.png" alt="NL"><span class="tcn">Nederland</span></div></td>
+        <td><div class="tval">€2.944</div><div class="tprev">vs €2.850</div></td>
+        <td><div class="tval">202</div><div class="tprev">vs 212</div></td>
+        <td><div class="tval">€13.116</div><div class="tprev">vs €15.066</div></td>
+        <td><span class="rb rg">4,46x</span><div class="tprev"><span class="tdn">▼ -0,83</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">5,29x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/de.png" alt="DE"><span class="tcn">Duitsland</span></div></td>
+        <td><div class="tval">€789</div><div class="tprev">vs €629</div></td>
+        <td><div class="tval">54</div><div class="tprev">vs 67</div></td>
+        <td><div class="tval">€5.814</div><div class="tprev">vs €6.456</div></td>
+        <td><span class="rb rh">7,37x</span><div class="tprev"><span class="tdn">▼ -2,90</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">10,26x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/at.png" alt="AT"><span class="tcn">Oostenrijk</span></div></td>
+        <td><div class="tval">€1.106</div><div class="tprev">vs €1.048</div></td>
+        <td><div class="tval">42</div><div class="tprev">vs 31</div></td>
+        <td><div class="tval">€3.185</div><div class="tprev">vs €2.892</div></td>
+        <td><span class="rb ro">2,88x</span><div class="tprev"><span class="tdp">▲ +0,12</span>&nbsp;vs <span class="rb ro" style="font-size:9px;padding:1px 5px">2,76x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/be.png" alt="BE"><span class="tcn">België</span></div></td>
+        <td><div class="tval">€2.218</div><div class="tprev">vs €1.552</div></td>
+        <td><div class="tval">101</div><div class="tprev">vs 86</div></td>
+        <td><div class="tval">€5.772</div><div class="tprev">vs €4.662</div></td>
+        <td><span class="rb ro">2,60x</span><div class="tprev"><span class="tdn">▼ -0,40</span>&nbsp;vs <span class="rb rg" style="font-size:9px;padding:1px 5px">3,00x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/fr.png" alt="FR"><span class="tcn">Frankrijk</span></div></td>
+        <td><div class="tval">€186</div><div class="tprev">vs €191</div></td>
+        <td><div class="tval">16</div><div class="tprev">vs 23</div></td>
+        <td><div class="tval">€1.575</div><div class="tprev">vs €1.817</div></td>
+        <td><span class="rb rh">8,47x</span><div class="tprev"><span class="tdn">▼ -1,05</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">9,51x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/es.png" alt="ES"><span class="tcn">Spanje</span></div></td>
+        <td><div class="tval">€1.164</div><div class="tprev">vs €1.042</div></td>
+        <td><div class="tval">48</div><div class="tprev">vs 40</div></td>
+        <td><div class="tval">€2.603</div><div class="tprev">vs €2.290</div></td>
+        <td><span class="rb ro">2,24x</span><div class="tprev"><span class="tdp">▲ +0,04</span>&nbsp;vs <span class="rb ro" style="font-size:9px;padding:1px 5px">2,20x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/gb.png" alt="GB"><span class="tcn">VK</span></div></td>
+        <td><div class="tval">€1.290</div><div class="tprev">vs €1.367</div></td>
+        <td><div class="tval">47</div><div class="tprev">vs 49</div></td>
+        <td><div class="tval">€2.536</div><div class="tprev">vs €2.381</div></td>
+        <td><span class="rb rl2">1,97x</span><div class="tprev"><span class="tdp">▲ +0,22</span>&nbsp;vs <span class="rb rl2" style="font-size:9px;padding:1px 5px">1,74x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><span class="tfl">🌍</span><span class="tcn" style="color:var(--muted)">Overig</span></div></td>
+        <td><div class="tval" style="color:var(--muted)">€1.281</div><div class="tprev">vs €2.003</div></td>
+        <td><div class="tval" style="color:var(--muted)">43</div><div class="tprev">vs 41</div></td>
+        <td><div class="tval" style="color:var(--muted)">€4.685</div><div class="tprev">vs €3.388</div></td>
+        <td><span class="rb rg" style="opacity:.7">3,66x</span><div class="tprev"><span class="tdp">▲ +1,97</span>&nbsp;vs <span class="rb rl2" style="font-size:9px;padding:1px 5px;opacity:.7">1,69x</span></div></td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td>Totaal</td>
+      <td><div class="tval">€10.979</div><div class="tprev">vs €10.683</div></td>
+      <td><div class="tval">553</div><div class="tprev">vs 549</div></td>
+      <td><div class="tval">€39.285</div><div class="tprev">vs €38.950</div></td>
+      <td><span class="rb rg">3,58x</span><div class="tprev"><span class="tdn">▼ -0,07</span>&nbsp;vs <span class="rb rg" style="font-size:9px;padding:1px 5px">3,65x</span></div></td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="sec-lbl">ROAS legenda</div>
+<div class="legend">
+  <span class="rb rh">≥ 5,0x Uitstekend</span>
+  <span class="rb rg">3,0–4,9x Goed</span>
+  <span class="rb ro">2,0–2,9x Matig</span>
+  <span class="rb rl2">&lt; 2,0x Laag</span>
+</div>
+</div><!-- end tab-ga4 -->
+
+<!-- ══════════════ TAB: ADS OP TIJD ══════════════ -->
+<div id="tab-ads" class="panel">
+
+<div class="tab-hdr">
+  <div class="src-row">
+    <span class="src-badge sb-gads">Google Ads · kosten, conversies &amp; waarde op conv. datum</span>
+  </div>
+  <div class="kpi-strip">
+    <div class="kc">
+      <div class="kl">Kosten</div>
+      <div class="kv">€10.979</div>
+      <div class="kd dn">▲ +3%</div>
+    </div>
+    <div class="kc">
+      <div class="kl">Conv.waarde</div>
+      <div class="kv">€38.861</div>
+      <div class="kd dn">▼ -15%</div>
+    </div>
+    <div class="kc">
+      <div class="kl">ROAS</div>
+      <div class="kv">3,54x</div>
+      <div class="kd dn">▼ -17%</div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-lbl">Per land — tik om vergelijking te zien</div>
+
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/nl.png" alt="NL"><div class="cs">
+    <div class="cn">Nederland</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€2.944</div></div>
+      <div class="mc"><div class="ml">Conv.waarde</div><div class="mv">€13.931</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rg">4,73x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€2.850</span><span class="av">€2.944</span><span class="dl neg">+€94</span></div>
+    <div class="dr"><span class="rl">Conversies</span><span class="bv">234</span><span class="av">194</span><span class="dl neg">-40</span></div>
+    <div class="dr"><span class="rl">Conv.waarde</span><span class="bv">€16.349</span><span class="av">€13.931</span><span class="dl neg">-€2.418</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">5,74x</span></span><span><span class="rb rg">4,73x</span></span><span class="dl neg">-1,00</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/de.png" alt="DE"><div class="cs">
+    <div class="cn">Duitsland</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€789</div></div>
+      <div class="mc"><div class="ml">Conv.waarde</div><div class="mv">€4.813</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh">6,10x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€629</span><span class="av">€789</span><span class="dl neg">+€160</span></div>
+    <div class="dr"><span class="rl">Conversies</span><span class="bv">74</span><span class="av">47</span><span class="dl neg">-27</span></div>
+    <div class="dr"><span class="rl">Conv.waarde</span><span class="bv">€7.316</span><span class="av">€4.813</span><span class="dl neg">-€2.503</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">11,63x</span></span><span><span class="rb rh">6,10x</span></span><span class="dl neg">-5,53</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/at.png" alt="AT"><div class="cs">
+    <div class="cn">Oostenrijk</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€1.106</div></div>
+      <div class="mc"><div class="ml">Conv.waarde</div><div class="mv">€2.700</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb ro">2,44x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€1.048</span><span class="av">€1.106</span><span class="dl neg">+€58</span></div>
+    <div class="dr"><span class="rl">Conversies</span><span class="bv">42</span><span class="av">35</span><span class="dl neg">-7</span></div>
+    <div class="dr"><span class="rl">Conv.waarde</span><span class="bv">€3.674</span><span class="av">€2.700</span><span class="dl neg">-€974</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rg">3,51x</span></span><span><span class="rb ro">2,44x</span></span><span class="dl neg">-1,06</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/be.png" alt="BE"><div class="cs">
+    <div class="cn">België</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€2.218</div></div>
+      <div class="mc"><div class="ml">Conv.waarde</div><div class="mv">€7.268</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rg">3,28x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€1.552</span><span class="av">€2.218</span><span class="dl neg">+€666</span></div>
+    <div class="dr"><span class="rl">Conversies</span><span class="bv">128</span><span class="av">129</span><span class="dl pos">+1</span></div>
+    <div class="dr"><span class="rl">Conv.waarde</span><span class="bv">€6.526</span><span class="av">€7.268</span><span class="dl pos">+€742</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rg">4,20x</span></span><span><span class="rb rg">3,28x</span></span><span class="dl neg">-0,93</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/fr.png" alt="FR"><div class="cs">
+    <div class="cn">Frankrijk</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€186</div></div>
+      <div class="mc"><div class="ml">Conv.waarde</div><div class="mv">€1.350</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh">7,26x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€191</span><span class="av">€186</span><span class="dl pos">-€5</span></div>
+    <div class="dr"><span class="rl">Conversies</span><span class="bv">15</span><span class="av">14</span><span class="dl neg">-1</span></div>
+    <div class="dr"><span class="rl">Conv.waarde</span><span class="bv">€1.374</span><span class="av">€1.350</span><span class="dl neg">-€24</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">7,19x</span></span><span><span class="rb rh">7,26x</span></span><span class="dl pos">+0,06</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/es.png" alt="ES"><div class="cs">
+    <div class="cn">Spanje</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€1.164</div></div>
+      <div class="mc"><div class="ml">Conv.waarde</div><div class="mv">€2.518</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb ro">2,16x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€1.042</span><span class="av">€1.164</span><span class="dl neg">+€122</span></div>
+    <div class="dr"><span class="rl">Conversies</span><span class="bv">50</span><span class="av">48</span><span class="dl neg">-2</span></div>
+    <div class="dr"><span class="rl">Conv.waarde</span><span class="bv">€2.944</span><span class="av">€2.518</span><span class="dl neg">-€426</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb ro">2,83x</span></span><span><span class="rb ro">2,16x</span></span><span class="dl neg">-0,66</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/gb.png" alt="GB"><div class="cs">
+    <div class="cn">VK</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€1.290</div></div>
+      <div class="mc"><div class="ml">Conv.waarde</div><div class="mv">€1.717</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rl2">1,33x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€1.367</span><span class="av">€1.290</span><span class="dl pos">-€77</span></div>
+    <div class="dr"><span class="rl">Conversies</span><span class="bv">58</span><span class="av">34</span><span class="dl neg">-24</span></div>
+    <div class="dr"><span class="rl">Conv.waarde</span><span class="bv">€3.040</span><span class="av">€1.717</span><span class="dl neg">-€1.323</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb ro">2,22x</span></span><span><span class="rb rl2">1,33x</span></span><span class="dl neg">-0,89</span></div>
+  </div></div>
+</div>
+<div class="card ov" onclick="tog(this)">
+  <div class="card-hdr"><span class="flag">🌍</span><div class="cs">
+    <div class="cn">Overig</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€1.281</div></div>
+      <div class="mc"><div class="ml">Conv.waarde</div><div class="mv">€4.564</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rg" style="opacity:.7">3,56x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€2.003</span><span class="av">€1.281</span><span class="dl pos">-€722</span></div>
+    <div class="dr"><span class="rl">Conversies</span><span class="bv">45</span><span class="av">40</span><span class="dl neg">-5</span></div>
+    <div class="dr"><span class="rl">Conv.waarde</span><span class="bv">€4.267</span><span class="av">€4.564</span><span class="dl pos">+€297</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb ro" style="opacity:.7">2,13x</span></span><span><span class="rb rg" style="opacity:.7">3,56x</span></span><span class="dl pos">+1,43</span></div>
+  </div></div>
+</div>
+
+<div class="dt">
+  <table>
+    <thead><tr>
+      <th>Land</th><th>Kosten</th><th>Conversies</th><th>Conv.waarde</th><th>ROAS</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/nl.png" alt="NL"><span class="tcn">Nederland</span></div></td>
+        <td><div class="tval">€2.944</div><div class="tprev">vs €2.850</div></td>
+        <td><div class="tval">194</div><div class="tprev">vs 234</div></td>
+        <td><div class="tval">€13.931</div><div class="tprev">vs €16.349</div></td>
+        <td><span class="rb rg">4,73x</span><div class="tprev"><span class="tdn">▼ -1,00</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">5,74x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/de.png" alt="DE"><span class="tcn">Duitsland</span></div></td>
+        <td><div class="tval">€789</div><div class="tprev">vs €629</div></td>
+        <td><div class="tval">47</div><div class="tprev">vs 74</div></td>
+        <td><div class="tval">€4.813</div><div class="tprev">vs €7.316</div></td>
+        <td><span class="rb rh">6,10x</span><div class="tprev"><span class="tdn">▼ -5,53</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">11,63x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/at.png" alt="AT"><span class="tcn">Oostenrijk</span></div></td>
+        <td><div class="tval">€1.106</div><div class="tprev">vs €1.048</div></td>
+        <td><div class="tval">35</div><div class="tprev">vs 42</div></td>
+        <td><div class="tval">€2.700</div><div class="tprev">vs €3.674</div></td>
+        <td><span class="rb ro">2,44x</span><div class="tprev"><span class="tdn">▼ -1,06</span>&nbsp;vs <span class="rb rg" style="font-size:9px;padding:1px 5px">3,51x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/be.png" alt="BE"><span class="tcn">België</span></div></td>
+        <td><div class="tval">€2.218</div><div class="tprev">vs €1.552</div></td>
+        <td><div class="tval">129</div><div class="tprev">vs 128</div></td>
+        <td><div class="tval">€7.268</div><div class="tprev">vs €6.526</div></td>
+        <td><span class="rb rg">3,28x</span><div class="tprev"><span class="tdn">▼ -0,93</span>&nbsp;vs <span class="rb rg" style="font-size:9px;padding:1px 5px">4,20x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/fr.png" alt="FR"><span class="tcn">Frankrijk</span></div></td>
+        <td><div class="tval">€186</div><div class="tprev">vs €191</div></td>
+        <td><div class="tval">14</div><div class="tprev">vs 15</div></td>
+        <td><div class="tval">€1.350</div><div class="tprev">vs €1.374</div></td>
+        <td><span class="rb rh">7,26x</span><div class="tprev"><span class="tdp">▲ +0,06</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">7,19x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/es.png" alt="ES"><span class="tcn">Spanje</span></div></td>
+        <td><div class="tval">€1.164</div><div class="tprev">vs €1.042</div></td>
+        <td><div class="tval">48</div><div class="tprev">vs 50</div></td>
+        <td><div class="tval">€2.518</div><div class="tprev">vs €2.944</div></td>
+        <td><span class="rb ro">2,16x</span><div class="tprev"><span class="tdn">▼ -0,66</span>&nbsp;vs <span class="rb ro" style="font-size:9px;padding:1px 5px">2,83x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/gb.png" alt="GB"><span class="tcn">VK</span></div></td>
+        <td><div class="tval">€1.290</div><div class="tprev">vs €1.367</div></td>
+        <td><div class="tval">34</div><div class="tprev">vs 58</div></td>
+        <td><div class="tval">€1.717</div><div class="tprev">vs €3.040</div></td>
+        <td><span class="rb rl2">1,33x</span><div class="tprev"><span class="tdn">▼ -0,89</span>&nbsp;vs <span class="rb ro" style="font-size:9px;padding:1px 5px">2,22x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><span class="tfl">🌍</span><span class="tcn" style="color:var(--muted)">Overig</span></div></td>
+        <td><div class="tval" style="color:var(--muted)">€1.281</div><div class="tprev">vs €2.003</div></td>
+        <td><div class="tval" style="color:var(--muted)">40</div><div class="tprev">vs 45</div></td>
+        <td><div class="tval" style="color:var(--muted)">€4.564</div><div class="tprev">vs €4.267</div></td>
+        <td><span class="rb rg" style="opacity:.7">3,56x</span><div class="tprev"><span class="tdp">▲ +1,43</span>&nbsp;vs <span class="rb ro" style="font-size:9px;padding:1px 5px;opacity:.7">2,13x</span></div></td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td>Totaal</td>
+      <td><div class="tval">€10.979</div><div class="tprev">vs €10.683</div></td>
+      <td><div class="tval">539</div><div class="tprev">vs 646</div></td>
+      <td><div class="tval">€38.861</div><div class="tprev">vs €45.490</div></td>
+      <td><span class="rb rg">3,54x</span><div class="tprev"><span class="tdn">▼ -0,72</span>&nbsp;vs <span class="rb rg" style="font-size:9px;padding:1px 5px">4,26x</span></div></td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="sec-lbl">ROAS legenda</div>
+<div class="legend">
+  <span class="rb rh">≥ 5,0x Uitstekend</span>
+  <span class="rb rg">3,0–4,9x Goed</span>
+  <span class="rb ro">2,0–2,9x Matig</span>
+  <span class="rb rl2">&lt; 2,0x Laag</span>
+</div>
+</div><!-- end tab-ads -->
+
+<!-- ══════════════ TAB: GA4 WEEK ══════════════ -->
+<div id="tab-week" class="panel">
+
+<div class="tab-hdr">
+  <div class="src-row">
+    <span class="src-badge sb-gads">Google Ads · kosten</span>
+    <span class="src-badge sb-ga4">GA4 Elevar · omzet &amp; transacties (google/cpc)</span>
+    <span class="src-badge" style="background:#f5f0e8;color:#7a6020;">25–31 mei vs 18–24 mei</span>
+  </div>
+  <div class="kpi-strip">
+    <div class="kc">
+      <div class="kl">Kosten</div>
+      <div class="kv">€2.088</div>
+      <div class="kd dp">▼ -8%</div>
+    </div>
+    <div class="kc">
+      <div class="kl">Omzet GA4</div>
+      <div class="kv">€10.395</div>
+      <div class="kd dp">▲ +18%</div>
+    </div>
+    <div class="kc">
+      <div class="kl">ROAS</div>
+      <div class="kv">4,98x</div>
+      <div class="kd dp">▲ +28%</div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-lbl">Per land — tik om vergelijking te zien</div>
+
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/nl.png" alt="NL"><div class="cs">
+    <div class="cn">Nederland</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€664</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€3.397</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh">5,12x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€725</span><span class="av">€664</span><span class="dl pos">-€61</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">48</span><span class="av">52</span><span class="dl pos">+4</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€3.488</span><span class="av">€3.397</span><span class="dl neg">-€91</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rg">4,81x</span></span><span><span class="rb rh">5,12x</span></span><span class="dl pos">+0,30</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/de.png" alt="DE"><div class="cs">
+    <div class="cn">Duitsland</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€240</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€1.313</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh">5,47x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€190</span><span class="av">€240</span><span class="dl neg">+€50</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">10</span><span class="av">13</span><span class="dl pos">+3</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€1.224</span><span class="av">€1.313</span><span class="dl pos">+€89</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">6,44x</span></span><span><span class="rb rh">5,47x</span></span><span class="dl neg">-0,97</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/at.png" alt="AT"><div class="cs">
+    <div class="cn">Oostenrijk</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€29</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€609</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh">21,00x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€109</span><span class="av">€29</span><span class="dl pos">-€80</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">9</span><span class="av">8</span><span class="dl neg">-1</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€684</span><span class="av">€609</span><span class="dl neg">-€75</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">6,28x</span></span><span><span class="rb rh">21,00x</span></span><span class="dl pos">+14,72</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/be.png" alt="BE"><div class="cs">
+    <div class="cn">België</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€477</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€1.697</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rg">3,56x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€456</span><span class="av">€477</span><span class="dl neg">+€21</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">21</span><span class="av">29</span><span class="dl pos">+8</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€1.114</span><span class="av">€1.697</span><span class="dl pos">+€583</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb ro">2,44x</span></span><span><span class="rb rg">3,56x</span></span><span class="dl pos">+1,11</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/fr.png" alt="FR"><div class="cs">
+    <div class="cn">Frankrijk</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€24</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€310</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh">12,92x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€51</span><span class="av">€24</span><span class="dl pos">-€27</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">5</span><span class="av">4</span><span class="dl neg">-1</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€442</span><span class="av">€310</span><span class="dl neg">-€132</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rh">8,67x</span></span><span><span class="rb rh">12,92x</span></span><span class="dl pos">+4,25</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/es.png" alt="ES"><div class="cs">
+    <div class="cn">Spanje</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€230</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€636</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb ro">2,77x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€265</span><span class="av">€230</span><span class="dl pos">-€35</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">8</span><span class="av">11</span><span class="dl pos">+3</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€481</span><span class="av">€636</span><span class="dl pos">+€155</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rl2">1,82x</span></span><span><span class="rb ro">2,77x</span></span><span class="dl pos">+0,95</span></div>
+  </div></div>
+</div>
+<div class="card" onclick="tog(this)">
+  <div class="card-hdr"><img class="flag" src="https://flagcdn.com/w20/gb.png" alt="GB"><div class="cs">
+    <div class="cn">VK</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€264</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€658</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb ro">2,49x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€251</span><span class="av">€264</span><span class="dl neg">+€13</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">10</span><span class="av">11</span><span class="dl pos">+1</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€678</span><span class="av">€658</span><span class="dl neg">-€20</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb ro">2,70x</span></span><span><span class="rb ro">2,49x</span></span><span class="dl neg">-0,21</span></div>
+  </div></div>
+</div>
+<div class="card ov" onclick="tog(this)">
+  <div class="card-hdr"><span class="flag">🌍</span><div class="cs">
+    <div class="cn">Overig</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Kosten</div><div class="mv">€159</div></div>
+      <div class="mc"><div class="ml">Omzet</div><div class="mv">€1.775</div></div>
+      <div class="mc"><div class="ml">ROAS</div><div class="mv"><span class="rb rh" style="opacity:.7">11,16x</span></div></div>
+    </div>
+  </div><span class="chev">▾</span></div>
+  <div class="cd"><div class="di">
+    <div class="dh"><span></span><span>Vorig</span><span class="hcur">Huidig</span><span>Δ</span></div>
+    <div class="dr"><span class="rl">Kosten</span><span class="bv">€229</span><span class="av">€159</span><span class="dl pos">-€70</span></div>
+    <div class="dr"><span class="rl">Transacties</span><span class="bv">10</span><span class="av">14</span><span class="dl pos">+4</span></div>
+    <div class="dr"><span class="rl">Omzet</span><span class="bv">€725</span><span class="av">€1.775</span><span class="dl pos">+€1.050</span></div>
+    <div class="dr"><span class="rl">ROAS</span><span><span class="rb rg" style="opacity:.7">3,17x</span></span><span><span class="rb rh" style="opacity:.7">11,16x</span></span><span class="dl pos">+8,00</span></div>
+  </div></div>
+</div>
+
+<div class="dt">
+  <table>
+    <thead><tr>
+      <th>Land</th><th>Kosten</th><th>Transacties</th><th>Omzet GA4</th><th>ROAS</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/nl.png" alt="NL"><span class="tcn">Nederland</span></div></td>
+        <td><div class="tval">€664</div><div class="tprev">vs €725</div></td>
+        <td><div class="tval">52</div><div class="tprev">vs 48</div></td>
+        <td><div class="tval">€3.397</div><div class="tprev">vs €3.488</div></td>
+        <td><span class="rb rh">5,12x</span><div class="tprev"><span class="tdp">▲ +0,30</span>&nbsp;vs <span class="rb rg" style="font-size:9px;padding:1px 5px">4,81x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/de.png" alt="DE"><span class="tcn">Duitsland</span></div></td>
+        <td><div class="tval">€240</div><div class="tprev">vs €190</div></td>
+        <td><div class="tval">13</div><div class="tprev">vs 10</div></td>
+        <td><div class="tval">€1.313</div><div class="tprev">vs €1.224</div></td>
+        <td><span class="rb rh">5,47x</span><div class="tprev"><span class="tdn">▼ -0,97</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">6,44x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/at.png" alt="AT"><span class="tcn">Oostenrijk</span></div></td>
+        <td><div class="tval">€29</div><div class="tprev">vs €109</div></td>
+        <td><div class="tval">8</div><div class="tprev">vs 9</div></td>
+        <td><div class="tval">€609</div><div class="tprev">vs €684</div></td>
+        <td><span class="rb rh">21,00x</span><div class="tprev"><span class="tdp">▲ +14,72</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">6,28x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/be.png" alt="BE"><span class="tcn">België</span></div></td>
+        <td><div class="tval">€477</div><div class="tprev">vs €456</div></td>
+        <td><div class="tval">29</div><div class="tprev">vs 21</div></td>
+        <td><div class="tval">€1.697</div><div class="tprev">vs €1.114</div></td>
+        <td><span class="rb rg">3,56x</span><div class="tprev"><span class="tdp">▲ +1,11</span>&nbsp;vs <span class="rb ro" style="font-size:9px;padding:1px 5px">2,44x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/fr.png" alt="FR"><span class="tcn">Frankrijk</span></div></td>
+        <td><div class="tval">€24</div><div class="tprev">vs €51</div></td>
+        <td><div class="tval">4</div><div class="tprev">vs 5</div></td>
+        <td><div class="tval">€310</div><div class="tprev">vs €442</div></td>
+        <td><span class="rb rh">12,92x</span><div class="tprev"><span class="tdp">▲ +4,25</span>&nbsp;vs <span class="rb rh" style="font-size:9px;padding:1px 5px">8,67x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/es.png" alt="ES"><span class="tcn">Spanje</span></div></td>
+        <td><div class="tval">€230</div><div class="tprev">vs €265</div></td>
+        <td><div class="tval">11</div><div class="tprev">vs 8</div></td>
+        <td><div class="tval">€636</div><div class="tprev">vs €481</div></td>
+        <td><span class="rb ro">2,77x</span><div class="tprev"><span class="tdp">▲ +0,95</span>&nbsp;vs <span class="rb rl2" style="font-size:9px;padding:1px 5px">1,82x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><img class="tfl" src="https://flagcdn.com/w20/gb.png" alt="GB"><span class="tcn">VK</span></div></td>
+        <td><div class="tval">€264</div><div class="tprev">vs €251</div></td>
+        <td><div class="tval">11</div><div class="tprev">vs 10</div></td>
+        <td><div class="tval">€658</div><div class="tprev">vs €678</div></td>
+        <td><span class="rb ro">2,49x</span><div class="tprev"><span class="tdn">▼ -0,21</span>&nbsp;vs <span class="rb ro" style="font-size:9px;padding:1px 5px">2,70x</span></div></td>
+      </tr>
+      <tr>
+        <td><div class="tland"><span class="tfl">🌍</span><span class="tcn" style="color:var(--muted)">Overig</span></div></td>
+        <td><div class="tval" style="color:var(--muted)">€159</div><div class="tprev">vs €229</div></td>
+        <td><div class="tval" style="color:var(--muted)">14</div><div class="tprev">vs 10</div></td>
+        <td><div class="tval" style="color:var(--muted)">€1.775</div><div class="tprev">vs €725</div></td>
+        <td><span class="rb rh" style="opacity:.7">11,16x</span><div class="tprev"><span class="tdp">▲ +8,00</span>&nbsp;vs <span class="rb rg" style="font-size:9px;padding:1px 5px;opacity:.7">3,17x</span></div></td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td>Totaal</td>
+      <td><div class="tval">€2.088</div><div class="tprev">vs €2.276</div></td>
+      <td><div class="tval">142</div><div class="tprev">vs 121</div></td>
+      <td><div class="tval">€10.395</div><div class="tprev">vs €8.835</div></td>
+      <td><span class="rb rg">4,98x</span><div class="tprev"><span class="tdp">▲ +1,10</span>&nbsp;vs <span class="rb rg" style="font-size:9px;padding:1px 5px">3,88x</span></div></td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="sec-lbl">ROAS legenda</div>
+<div class="legend">
+  <span class="rb rh">≥ 5,0x Uitstekend</span>
+  <span class="rb rg">3,0–4,9x Goed</span>
+  <span class="rb ro">2,0–2,9x Matig</span>
+  <span class="rb rl2">&lt; 2,0x Laag</span>
+</div>
+</div><!-- end tab-week -->
+
+<div class="footer">
+  <img class="ftr-logo"
+    src="https://puregoatcompany.com/cdn/shop/files/logo_3_210x.png?v=1668428731"
+    alt="Pure Goat Company" onerror="this.style.display='none'">
+  Pure Goat Company (4498251491) · GA4 Elevar (471154400)<br>
+  30d: 2 mei – 31 mei 2026 &nbsp;·&nbsp; Week: 25–31 mei 2026
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+function tog(card) { card.classList.toggle('open'); }
+function setView(v) {
+  const mob = document.getElementById('vt-mob');
+  const dsk = document.getElementById('vt-dsk');
+  if(v === 'desktop') {
+    document.body.classList.add('dv');
+    mob.classList.remove('active'); dsk.classList.add('active');
+  } else {
+    document.body.classList.remove('dv');
+    mob.classList.add('active'); dsk.classList.remove('active');
+  }
+}
+</script>
+</body>
+</html>
