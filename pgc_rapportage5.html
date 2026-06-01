@@ -154,6 +154,12 @@ img.flag { height:22px; width:auto; border-radius:3px; }
 .ftr-logo { height:20px; opacity:.35; display:block; margin:0 auto 7px; }
 .panel { display:none; }
 .panel.active { display:block; }
+#tab-periodic .dt td.plbl { text-align:left; font-weight:700; color:var(--navy); white-space:nowrap; }
+#tab-periodic .dt td { border-left:none; }
+#tab-periodic .dt th[style*="border-left"],
+#tab-periodic .dt td:nth-child(3),
+#tab-periodic .dt td:nth-child(6) { border-left:2px solid var(--border); }
+body.periodic-active { max-width:900px; }
 
 /* ── VIEW TOGGLE ── */
 .view-toggle { display:flex; justify-content:flex-end; padding:6px 12px 0; gap:5px; }
@@ -218,6 +224,7 @@ body.dv .sec-lbl { display:none; }
   <button class="tab-btn active" onclick="showTab('ga4',this)">📈&nbsp; GA4 · Omzet</button>
   <button class="tab-btn" onclick="showTab('ads',this)">📊&nbsp; Google Ads · Omzet</button>
   <button class="tab-btn" onclick="showTab('week',this)">🗓&nbsp; Omzet · Last week</button>
+  <button class="tab-btn" onclick="showTab('periodic',this)">📅&nbsp; Periodiek</button>
 </div>
 <!-- VIEW TOGGLE -->
 <div class="view-toggle">
@@ -969,6 +976,335 @@ body.dv .sec-lbl { display:none; }
 </div>
 </div><!-- end tab-week -->
 
+<!-- ══════════════ TAB: PERIODIC ══════════════ -->
+<div id="tab-periodic" class="panel">
+
+<div class="tab-hdr">
+  <div class="src-row">
+    <span class="src-badge sb-gads">Google Ads · kosten, conversies &amp; waarde</span>
+    <span class="src-badge sb-ga4">GA4 Elevar · omzet &amp; transacties (google/cpc)</span>
+  </div>
+</div>
+
+<div class="sec-lbl">Maandelijks overzicht 2026</div>
+
+<div class="dt" style="display:block">
+  <table>
+    <thead><tr>
+      <th>Periode</th><th>Kosten</th><th colspan="3" style="text-align:center;border-left:2px solid var(--border)">GA4 · Omzet</th><th colspan="3" style="text-align:center;border-left:2px solid var(--border)">Google Ads · Conv.</th>
+    </tr>
+    <tr style="background:var(--ice-l)">
+      <th></th><th></th><th style="border-left:2px solid var(--border)">Trans.</th><th>Omzet</th><th>ROAS</th><th style="border-left:2px solid var(--border)">Conv.</th><th>Waarde</th><th>ROAS</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td class="plbl">Januari 2026</td>
+        <td><div class="tval">€8.744</div></td>
+        <td><div class="tval">509</div></td>
+        <td><div class="tval">€33.201</div></td>
+        <td><span class="rb rg">3,80x</span></td>
+        <td><div class="tval">782</div></td>
+        <td><div class="tval">€52.166</div></td>
+        <td><span class="rb rh">5,97x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">Februari 2026</td>
+        <td><div class="tval">€9.033</div></td>
+        <td><div class="tval">580</div></td>
+        <td><div class="tval">€39.555</div></td>
+        <td><span class="rb rg">4,38x</span></td>
+        <td><div class="tval">885</div></td>
+        <td><div class="tval">€61.439</div></td>
+        <td><span class="rb rh">6,80x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">Maart 2026</td>
+        <td><div class="tval">€10.171</div></td>
+        <td><div class="tval">527</div></td>
+        <td><div class="tval">€36.574</div></td>
+        <td><span class="rb rg">3,60x</span></td>
+        <td><div class="tval">801</div></td>
+        <td><div class="tval">€55.181</div></td>
+        <td><span class="rb rh">5,43x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">April 2026</td>
+        <td><div class="tval">€10.617</div></td>
+        <td><div class="tval">554</div></td>
+        <td><div class="tval">€39.447</div></td>
+        <td><span class="rb rg">3,72x</span></td>
+        <td><div class="tval">660</div></td>
+        <td><div class="tval">€46.814</div></td>
+        <td><span class="rb rg">4,41x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">Mei 2026</td>
+        <td><div class="tval">€11.363</div></td>
+        <td><div class="tval">567</div></td>
+        <td><div class="tval">€40.350</div></td>
+        <td><span class="rb rg">3,55x</span></td>
+        <td><div class="tval">560</div></td>
+        <td><div class="tval">€40.217</div></td>
+        <td><span class="rb rg">3,54x</span></td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td><strong>YTD 2026</strong></td>
+      <td><div class="tval">€49.929</div></td>
+      <td><div class="tval">2.737</div></td>
+      <td><div class="tval">€189.127</div></td>
+      <td><span class="rb rg">3,79x</span></td>
+      <td><div class="tval">3.688</div></td>
+      <td><div class="tval">€255.818</div></td>
+      <td><span class="rb rh">5,12x</span></td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="sec-lbl">Wekelijks overzicht 2026 (ma – zo)</div>
+
+<div class="dt" style="display:block">
+  <table>
+    <thead><tr>
+      <th>Week</th><th>Kosten</th><th colspan="3" style="text-align:center;border-left:2px solid var(--border)">GA4 · Omzet</th><th colspan="3" style="text-align:center;border-left:2px solid var(--border)">Google Ads · Conv.</th>
+    </tr>
+    <tr style="background:var(--ice-l)">
+      <th></th><th></th><th style="border-left:2px solid var(--border)">Trans.</th><th>Omzet</th><th>ROAS</th><th style="border-left:2px solid var(--border)">Conv.</th><th>Waarde</th><th>ROAS</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td class="plbl">29 dec – 4 jan</td>
+        <td><div class="tval">€867</div></td>
+        <td><div class="tval">54</div></td>
+        <td><div class="tval">€4.095</div></td>
+        <td><span class="rb rg">4,72x</span></td>
+        <td><div class="tval">101</div></td>
+        <td><div class="tval">€7.615</div></td>
+        <td><span class="rb rh">8,79x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">5 – 11 jan</td>
+        <td><div class="tval">€1.794</div></td>
+        <td><div class="tval">120</div></td>
+        <td><div class="tval">€7.996</div></td>
+        <td><span class="rb rg">4,46x</span></td>
+        <td><div class="tval">167</div></td>
+        <td><div class="tval">€10.480</div></td>
+        <td><span class="rb rh">5,84x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">12 – 18 jan</td>
+        <td><div class="tval">€1.953</div></td>
+        <td><div class="tval">122</div></td>
+        <td><div class="tval">€7.378</div></td>
+        <td><span class="rb rg">3,78x</span></td>
+        <td><div class="tval">189</div></td>
+        <td><div class="tval">€11.878</div></td>
+        <td><span class="rb rh">6,08x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">19 – 25 jan</td>
+        <td><div class="tval">€2.182</div></td>
+        <td><div class="tval">119</div></td>
+        <td><div class="tval">€7.701</div></td>
+        <td><span class="rb rg">3,53x</span></td>
+        <td><div class="tval">140</div></td>
+        <td><div class="tval">€9.677</div></td>
+        <td><span class="rb rg">4,44x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">26 jan – 1 feb</td>
+        <td><div class="tval">€2.235</div></td>
+        <td><div class="tval">114</div></td>
+        <td><div class="tval">€7.082</div></td>
+        <td><span class="rb rg">3,17x</span></td>
+        <td><div class="tval">207</div></td>
+        <td><div class="tval">€13.670</div></td>
+        <td><span class="rb rh">6,11x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">2 – 8 feb</td>
+        <td><div class="tval">€2.621</div></td>
+        <td><div class="tval">155</div></td>
+        <td><div class="tval">€11.049</div></td>
+        <td><span class="rb rg">4,22x</span></td>
+        <td><div class="tval">218</div></td>
+        <td><div class="tval">€15.942</div></td>
+        <td><span class="rb rh">6,08x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">9 – 15 feb</td>
+        <td><div class="tval">€2.128</div></td>
+        <td><div class="tval">143</div></td>
+        <td><div class="tval">€8.753</div></td>
+        <td><span class="rb rg">4,11x</span></td>
+        <td><div class="tval">236</div></td>
+        <td><div class="tval">€15.198</div></td>
+        <td><span class="rb rh">7,14x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">16 – 22 feb</td>
+        <td><div class="tval">€1.866</div></td>
+        <td><div class="tval">135</div></td>
+        <td><div class="tval">€9.830</div></td>
+        <td><span class="rb rh">5,27x</span></td>
+        <td><div class="tval">218</div></td>
+        <td><div class="tval">€15.185</div></td>
+        <td><span class="rb rh">8,14x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">23 feb – 1 mrt</td>
+        <td><div class="tval">€2.477</div></td>
+        <td><div class="tval">142</div></td>
+        <td><div class="tval">€10.200</div></td>
+        <td><span class="rb rg">4,12x</span></td>
+        <td><div class="tval">208</div></td>
+        <td><div class="tval">€15.218</div></td>
+        <td><span class="rb rh">6,14x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">2 – 8 mrt</td>
+        <td><div class="tval">€2.658</div></td>
+        <td><div class="tval">118</div></td>
+        <td><div class="tval">€7.365</div></td>
+        <td><span class="rb ro">2,77x</span></td>
+        <td><div class="tval">201</div></td>
+        <td><div class="tval">€12.614</div></td>
+        <td><span class="rb rg">4,75x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">9 – 15 mrt</td>
+        <td><div class="tval">€2.044</div></td>
+        <td><div class="tval">117</div></td>
+        <td><div class="tval">€7.256</div></td>
+        <td><span class="rb rg">3,55x</span></td>
+        <td><div class="tval">197</div></td>
+        <td><div class="tval">€13.280</div></td>
+        <td><span class="rb rh">6,50x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">16 – 22 mrt</td>
+        <td><div class="tval">€2.148</div></td>
+        <td><div class="tval">103</div></td>
+        <td><div class="tval">€7.680</div></td>
+        <td><span class="rb rg">3,58x</span></td>
+        <td><div class="tval">141</div></td>
+        <td><div class="tval">€10.736</div></td>
+        <td><span class="rb rh">5,00x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">23 – 29 mrt</td>
+        <td><div class="tval">€2.391</div></td>
+        <td><div class="tval">129</div></td>
+        <td><div class="tval">€8.729</div></td>
+        <td><span class="rb rg">3,65x</span></td>
+        <td><div class="tval">187</div></td>
+        <td><div class="tval">€12.648</div></td>
+        <td><span class="rb rh">5,29x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">30 mrt – 5 apr</td>
+        <td><div class="tval">€2.102</div></td>
+        <td><div class="tval">129</div></td>
+        <td><div class="tval">€10.037</div></td>
+        <td><span class="rb rg">4,78x</span></td>
+        <td><div class="tval">176</div></td>
+        <td><div class="tval">€12.513</div></td>
+        <td><span class="rb rh">5,95x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">6 – 12 apr</td>
+        <td><div class="tval">€2.217</div></td>
+        <td><div class="tval">124</div></td>
+        <td><div class="tval">€8.397</div></td>
+        <td><span class="rb rg">3,79x</span></td>
+        <td><div class="tval">138</div></td>
+        <td><div class="tval">€9.904</div></td>
+        <td><span class="rb rg">4,47x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">13 – 19 apr</td>
+        <td><div class="tval">€2.197</div></td>
+        <td><div class="tval">133</div></td>
+        <td><div class="tval">€8.776</div></td>
+        <td><span class="rb rg">3,99x</span></td>
+        <td><div class="tval">159</div></td>
+        <td><div class="tval">€11.631</div></td>
+        <td><span class="rb rh">5,29x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">20 – 26 apr</td>
+        <td><div class="tval">€2.821</div></td>
+        <td><div class="tval">137</div></td>
+        <td><div class="tval">€11.736</div></td>
+        <td><span class="rb rg">4,16x</span></td>
+        <td><div class="tval">154</div></td>
+        <td><div class="tval">€11.525</div></td>
+        <td><span class="rb rg">4,09x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">27 apr – 3 mei</td>
+        <td><div class="tval">€3.064</div></td>
+        <td><div class="tval">116</div></td>
+        <td><div class="tval">€7.794</div></td>
+        <td><span class="rb ro">2,54x</span></td>
+        <td><div class="tval">143</div></td>
+        <td><div class="tval">€10.249</div></td>
+        <td><span class="rb rg">3,35x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">4 – 10 mei</td>
+        <td><div class="tval">€3.023</div></td>
+        <td><div class="tval">151</div></td>
+        <td><div class="tval">€9.860</div></td>
+        <td><span class="rb rg">3,26x</span></td>
+        <td><div class="tval">171</div></td>
+        <td><div class="tval">€11.543</div></td>
+        <td><span class="rb rg">3,82x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">11 – 17 mei</td>
+        <td><div class="tval">€2.778</div></td>
+        <td><div class="tval">115</div></td>
+        <td><div class="tval">€8.181</div></td>
+        <td><span class="rb ro">2,95x</span></td>
+        <td><div class="tval">119</div></td>
+        <td><div class="tval">€8.018</div></td>
+        <td><span class="rb ro">2,89x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">18 – 24 mei</td>
+        <td><div class="tval">€2.276</div></td>
+        <td><div class="tval">119</div></td>
+        <td><div class="tval">€8.835</div></td>
+        <td><span class="rb rg">3,88x</span></td>
+        <td><div class="tval">104</div></td>
+        <td><div class="tval">€7.485</div></td>
+        <td><span class="rb rg">3,29x</span></td>
+      </tr>
+      <tr>
+        <td class="plbl">25 – 31 mei</td>
+        <td><div class="tval">€2.088</div></td>
+        <td><div class="tval">141</div></td>
+        <td><div class="tval">€10.395</div></td>
+        <td><span class="rb rg">4,98x</span></td>
+        <td><div class="tval">114</div></td>
+        <td><div class="tval">€8.807</div></td>
+        <td><span class="rb rg">4,22x</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="sec-lbl">ROAS legenda</div>
+<div class="legend">
+  <span class="rb rh">≥ 5,0x Uitstekend</span>
+  <span class="rb rg">3,0–4,9x Goed</span>
+  <span class="rb ro">2,0–2,9x Matig</span>
+  <span class="rb rl2">&lt; 2,0x Laag</span>
+</div>
+</div><!-- end tab-periodic -->
+
 <div class="footer">
   <img class="ftr-logo"
     src="https://puregoatcompany.com/cdn/shop/files/logo_3_210x.png?v=1668428731"
@@ -983,6 +1319,13 @@ function showTab(id, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
+  if(id === 'periodic') {
+    document.body.classList.add('periodic-active');
+    document.querySelector('.view-toggle').style.display='none';
+  } else {
+    document.body.classList.remove('periodic-active');
+    document.querySelector('.view-toggle').style.display='';
+  }
 }
 function tog(card) { card.classList.toggle('open'); }
 function setView(v) {
