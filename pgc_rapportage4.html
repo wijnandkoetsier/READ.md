@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PGC Rapportage 4 — Pure Goat Company</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #f5f6fa;
+            --card: #ffffff;
+            --primary: #2d3436;
+            --accent: #6c5ce7;
+            --accent2: #00b894;
+            --accent3: #fdcb6e;
+            --accent4: #e17055;
+            --muted: #636e72;
+            --border: #dfe6e9;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--primary); line-height: 1.6; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
+        header { background: linear-gradient(135deg, var(--accent), #a29bfe); color: white; padding: 40px 0; margin-bottom: 32px; border-radius: 0 0 20px 20px; }
+        header .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        header h1 { font-size: 28px; font-weight: 700; }
+        header .meta { font-size: 14px; opacity: 0.9; text-align: right; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .kpi-card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .kpi-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 4px; }
+        .kpi-card .value { font-size: 28px; font-weight: 700; }
+        .kpi-card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+        .kpi-card.accent .value { color: var(--accent); }
+        .kpi-card.green .value { color: var(--accent2); }
+        .kpi-card.orange .value { color: var(--accent3); }
+        .kpi-card.red .value { color: var(--accent4); }
+        .section { margin-bottom: 40px; }
+        .section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
+        .chart-container { background: var(--card); border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 24px; }
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        th, td { padding: 12px 16px; text-align: right; border-bottom: 1px solid var(--border); }
+        th { background: var(--primary); color: white; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        td:first-child, th:first-child { text-align: left; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8f9ff; }
+        tfoot td { font-weight: 700; background: #f0f0f5; }
+        .status { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .status.enabled { background: #d4edda; color: #155724; }
+        .status.paused { background: #fff3cd; color: #856404; }
+        .source-badge { font-size: 10px; color: var(--muted); margin-top: 24px; text-align: center; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div>
+                <h1>Pure Goat Company — Rapportage 4</h1>
+                <p style="opacity:0.85;margin-top:4px;">Maandelijkse performance rapportage</p>
+            </div>
+            <div class="meta">
+                <div><strong>Periode:</strong> 2 mei 2026 — 31 mei 2026</div>
+                <div><strong>Gegenereerd:</strong> 1 juni 2026</div>
+                <div><strong>Bron:</strong> Windsor.ai (Google Ads + GA4)</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- KPI Overview -->
+        <div class="section">
+            <h2>Totaaloverzicht</h2>
+            <div class="kpi-grid">
+                <div class="kpi-card accent">
+                    <div class="label">Totale Spend (Google Ads)</div>
+                    <div class="value">&euro;10.979</div>
+                    <div class="sub">30 dagen</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="label">Conversiewaarde (Google Ads)</div>
+                    <div class="value">&euro;38.861</div>
+                    <div class="sub">ROAS: 3,54</div>
+                </div>
+                <div class="kpi-card orange">
+                    <div class="label">Omzet (GA4)</div>
+                    <div class="value">&euro;76.714</div>
+                    <div class="sub">1.037 transacties</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="label">Sessies (GA4)</div>
+                    <div class="value">10.411</div>
+                    <div class="sub">8.516 actieve gebruikers</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="label">Clicks (Google Ads)</div>
+                    <div class="value">9.027</div>
+                    <div class="sub">CTR: 1,42%</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="label">Gem. CPC</div>
+                    <div class="value">&euro;1,22</div>
+                    <div class="sub">CPA: &euro;20,36</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="label">Engagement Rate (GA4)</div>
+                    <div class="value">69,0%</div>
+                    <div class="sub">7.186 engaged sessions</div>
+                </div>
+                <div class="kpi-card accent">
+                    <div class="label">Conversieratio (GA4)</div>
+                    <div class="value">9,96%</div>
+                    <div class="sub">Transacties / Sessies</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Google Ads Charts -->
+        <div class="section">
+            <h2>Google Ads — Dagelijks Verloop</h2>
+            <div class="chart-row">
+                <div class="chart-container">
+                    <canvas id="chartSpendConv"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartClicks"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Google Ads Campaign Table -->
+        <div class="section">
+            <h2>Google Ads — Campagneoverzicht</h2>
+            <table id="campaignTable">
+                <thead>
+                    <tr>
+                        <th>Campagne</th>
+                        <th>Status</th>
+                        <th>Impressies</th>
+                        <th>Clicks</th>
+                        <th>CTR</th>
+                        <th>Gem. CPC</th>
+                        <th>Spend</th>
+                        <th>Conv.</th>
+                        <th>Conv. waarde</th>
+                        <th>ROAS</th>
+                    </tr>
+                </thead>
+                <tbody id="campaignBody"></tbody>
+                <tfoot id="campaignFoot"></tfoot>
+            </table>
+        </div>
+
+        <!-- GA4 Charts -->
+        <div class="section">
+            <h2>GA4 — Dagelijks Verloop</h2>
+            <div class="chart-row">
+                <div class="chart-container">
+                    <canvas id="chartSessionsRevenue"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartTransactions"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- GA4 Channel Table -->
+        <div class="section">
+            <h2>GA4 — Kanaaloverzicht</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kanaal</th>
+                        <th>Sessies</th>
+                        <th>Actieve gebruikers</th>
+                        <th>Engaged sessies</th>
+                        <th>Engagement %</th>
+                        <th>Transacties</th>
+                        <th>Omzet</th>
+                        <th>Conv. %</th>
+                    </tr>
+                </thead>
+                <tbody id="channelBody"></tbody>
+                <tfoot id="channelFoot"></tfoot>
+            </table>
+        </div>
+
+        <div class="source-badge">
+            Data opgehaald via Windsor.ai &bull; Google Ads account 449-825-1491 &bull; GA4 property 471154400 &bull; Rapport gegenereerd op 1 juni 2026
+        </div>
+    </div>
+
+    <script>
+        const fmt = (n, d=0) => n.toLocaleString('nl-NL', {minimumFractionDigits: d, maximumFractionDigits: d});
+        const eur = (n, d=2) => '€' + fmt(n, d);
+        const pct = (n, d=2) => fmt(n, d) + '%';
+
+        // --- DATA ---
+        const campaigns = {"02. DE | Search - Branded":{"impressions":371,"clicks":74,"spend":42.63,"conversions":24.45,"conversion_value":2920.37,"status":"ENABLED"},"04. BENL | Search - Branded":{"impressions":906,"clicks":205,"spend":276.04,"conversions":57.86,"conversion_value":3239.65,"status":"ENABLED"},"07. ES | Pmax (excl brand)":{"impressions":96929,"clicks":981,"spend":596.67,"conversions":24.57,"conversion_value":952.81,"status":"ENABLED"},"11. DK | Search - Branded":{"impressions":172,"clicks":52,"spend":22.25,"conversions":17.53,"conversion_value":2438.32,"status":"ENABLED"},"06. PL | Search - Branded":{"impressions":360,"clicks":32,"spend":35.85,"conversions":0,"conversion_value":0,"status":"ENABLED"},"08. IT | Search - Branded":{"impressions":151,"clicks":19,"spend":24.70,"conversions":1.34,"conversion_value":191.35,"status":"ENABLED"},"15. UK | Search - Branded":{"impressions":993,"clicks":222,"spend":217.74,"conversions":11.61,"conversion_value":619.28,"status":"ENABLED"},"16. VU | Search - Branded":{"impressions":1187,"clicks":89,"spend":19.94,"conversions":0,"conversion_value":0,"status":"ENABLED"},"01. NL | Pmax (+brand)":{"impressions":35375,"clicks":556,"spend":1461.77,"conversions":66.92,"conversion_value":4848.01,"status":"ENABLED"},"02. DE | Pmax (+brand)":{"impressions":6854,"clicks":142,"spend":261.27,"conversions":14.81,"conversion_value":1237.46,"status":"ENABLED"},"13. AT | Pmax (+brand)":{"impressions":24829,"clicks":281,"spend":712.49,"conversions":14.08,"conversion_value":801.01,"status":"ENABLED"},"11. DK | Pmax (+brand)":{"impressions":26130,"clicks":196,"spend":228.62,"conversions":9.87,"conversion_value":848.52,"status":"ENABLED"},"04. BENL | Pmax (+brand)":{"impressions":14396,"clicks":271,"spend":802.54,"conversions":29.39,"conversion_value":1607.43,"status":"ENABLED"},"05. FR | Pmax (brand)":{"impressions":3107,"clicks":32,"spend":80.05,"conversions":5.04,"conversion_value":615.04,"status":"ENABLED"},"01. NL | Search - Branded":{"impressions":5623,"clicks":795,"spend":834.52,"conversions":114.61,"conversion_value":8447.81,"status":"ENABLED"},"01. NL | Pmax  (excl brand)":{"impressions":46641,"clicks":708,"spend":1027.19,"conversions":30.52,"conversion_value":1652.78,"status":"ENABLED"},"04. BENL | Pmax (excl brand)":{"impressions":33859,"clicks":381,"spend":739.68,"conversions":23.17,"conversion_value":1404.02,"status":"ENABLED"},"02. DE | Pmax (excl brand)":{"impressions":28489,"clicks":294,"spend":485.47,"conversions":7.42,"conversion_value":654.95,"status":"ENABLED"},"13. AT | Pmax (excl brand)":{"impressions":24688,"clicks":286,"spend":382.14,"conversions":6.39,"conversion_value":221.34,"status":"ENABLED"},"15. UK | Pmax (excl brand)":{"impressions":39581,"clicks":377,"spend":493.22,"conversions":8.57,"conversion_value":365.87,"status":"ENABLED"},"11. DK | Pmax":{"impressions":31496,"clicks":230,"spend":403.02,"conversions":8.58,"conversion_value":861.34,"status":"ENABLED"},"15. UK | Pmax (brand)":{"impressions":26556,"clicks":347,"spend":578.63,"conversions":13.52,"conversion_value":731.51,"status":"ENABLED"},"07. ES | Pmax (brand)":{"impressions":27122,"clicks":360,"spend":545.15,"conversions":19.31,"conversion_value":1336.68,"status":"ENABLED"},"08. IT | Pmax":{"impressions":60321,"clicks":1235,"spend":268.48,"conversions":0.59,"conversion_value":99.32,"status":"PAUSED"},"06. PL | Pmax":{"impressions":87033,"clicks":577,"spend":268.89,"conversions":1.00,"conversion_value":106.79,"status":"PAUSED"},"05. FR | Pmax (excl brand)":{"impressions":12669,"clicks":117,"spend":113.45,"conversions":2.00,"conversion_value":38.97,"status":"PAUSED"},"13. AT | Search - Branded":{"impressions":145,"clicks":53,"spend":11.68,"conversions":14.66,"conversion_value":1677.53,"status":"ENABLED"},"05. FR | - Search - Branded":{"impressions":100,"clicks":27,"spend":11.27,"conversions":6.72,"conversion_value":695.73,"status":"ENABLED"},"07. ES | - Search - Branded":{"impressions":242,"clicks":74,"spend":22.24,"conversions":3.63,"conversion_value":228.46,"status":"ENABLED"},"09. SE | Search - Branded":{"impressions":28,"clicks":12,"spend":10.04,"conversions":1.00,"conversion_value":18.34,"status":"ENABLED"},"03. BEFR | Search - Branded":{"impressions":10,"clicks":2,"spend":1.06,"conversions":0,"conversion_value":0,"status":"ENABLED"}};
+
+        const channels = {"Cross-network":{"sessions":3781,"active_users":3216,"engaged_sessions":2552,"ecommerce_purchases":292,"purchase_revenue":19143.00,"transactions":292},"Organic Search":{"sessions":1290,"active_users":1034,"engaged_sessions":794,"ecommerce_purchases":75,"purchase_revenue":5552.54,"transactions":75},"Paid Search":{"sessions":1851,"active_users":1511,"engaged_sessions":1509,"ecommerce_purchases":327,"purchase_revenue":25418.07,"transactions":327},"Direct":{"sessions":1784,"active_users":1464,"engaged_sessions":1322,"ecommerce_purchases":157,"purchase_revenue":12126.00,"transactions":157},"Organic Social":{"sessions":746,"active_users":581,"engaged_sessions":407,"ecommerce_purchases":8,"purchase_revenue":415.41,"transactions":8},"Unassigned":{"sessions":481,"active_users":332,"engaged_sessions":252,"ecommerce_purchases":91,"purchase_revenue":7241.88,"transactions":91},"Organic Shopping":{"sessions":213,"active_users":153,"engaged_sessions":166,"ecommerce_purchases":43,"purchase_revenue":3018.23,"transactions":43},"Paid Social":{"sessions":72,"active_users":62,"engaged_sessions":52,"ecommerce_purchases":2,"purchase_revenue":165.81,"transactions":2},"Referral":{"sessions":163,"active_users":135,"engaged_sessions":109,"ecommerce_purchases":42,"purchase_revenue":3632.75,"transactions":42},"Display":{"sessions":9,"active_users":8,"engaged_sessions":5,"ecommerce_purchases":0,"purchase_revenue":0,"transactions":0},"AI Assistant":{"sessions":20,"active_users":19,"engaged_sessions":17,"ecommerce_purchases":0,"purchase_revenue":0,"transactions":0},"Email":{"sessions":1,"active_users":1,"engaged_sessions":1,"ecommerce_purchases":0,"purchase_revenue":0,"transactions":0}};
+
+        const gads_dates = ["2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26","2026-05-27","2026-05-28","2026-05-29","2026-05-30","2026-05-31"];
+        const gads_spend = [340.96,473.84,399.1,466.99,360.69,379.33,393.98,445.3,577.12,439.26,340.75,470.83,447.0,304.13,350.85,424.89,478.84,416.05,318.48,298.29,222.28,226.43,315.36,273.02,255.95,335.61,291.19,312.82,235.48,383.84];
+        const gads_conv_value = [513.01,2493.65,1348.46,2692.2,2061.06,1897.35,862.67,1021.97,1659.56,1862.45,645.7,1660.79,951.43,498.72,873.82,1525.38,1300.25,887.24,1330.23,1173.35,748.98,1023.06,1022.0,1261.77,1248.73,879.37,2141.81,877.6,957.89,1440.17];
+        const gads_clicks = [319,329,476,451,398,385,413,301,339,364,300,315,427,302,317,429,390,318,242,215,187,182,215,166,212,216,204,208,187,220];
+
+        const ga4_dates = ["2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26","2026-05-27","2026-05-28","2026-05-29","2026-05-30","2026-05-31"];
+        const ga4_sessions = [350,365,403,433,412,391,352,397,397,446,353,366,327,327,299,387,459,338,342,297,281,249,247,293,375,306,310,296,271,342];
+        const ga4_revenue = [1508.02,2987.16,1879.9,3187.78,2712.64,3845.9,1611.08,2445.75,2627.86,2836.22,2479.79,2620.25,1835.74,1577.89,1733.46,2550.29,3004.97,2280.1,3686.8,2380.62,2385.34,1774.78,1660.7,3160.15,3985.46,2029.6,3599.46,2555.87,2787.51,2982.6];
+        const ga4_transactions = [20,35,35,39,33,51,31,37,40,37,34,34,24,25,23,34,47,30,46,33,36,22,26,45,44,33,41,30,38,34];
+
+        const shortDates = gads_dates.map(d => d.slice(5));
+
+        // --- Campaign Table ---
+        const tbody = document.getElementById('campaignBody');
+        const tfoot = document.getElementById('campaignFoot');
+        let totI=0, totC=0, totS=0, totConv=0, totCV=0;
+
+        const sorted = Object.entries(campaigns).sort((a,b) => b[1].spend - a[1].spend);
+        sorted.forEach(([name, c]) => {
+            const ctr = c.impressions ? (c.clicks/c.impressions*100) : 0;
+            const cpc = c.clicks ? (c.spend/c.clicks) : 0;
+            const roas = c.spend ? (c.conversion_value/c.spend) : 0;
+            const statusClass = c.status === 'ENABLED' ? 'enabled' : 'paused';
+            tbody.innerHTML += `<tr>
+                <td>${name}</td>
+                <td><span class="status ${statusClass}">${c.status}</span></td>
+                <td>${fmt(c.impressions)}</td>
+                <td>${fmt(c.clicks)}</td>
+                <td>${pct(ctr)}</td>
+                <td>${eur(cpc)}</td>
+                <td>${eur(c.spend)}</td>
+                <td>${fmt(c.conversions,1)}</td>
+                <td>${eur(c.conversion_value)}</td>
+                <td>${fmt(roas,2)}</td>
+            </tr>`;
+            totI += c.impressions; totC += c.clicks; totS += c.spend; totConv += c.conversions; totCV += c.conversion_value;
+        });
+        tfoot.innerHTML = `<tr>
+            <td colspan="2"><strong>Totaal</strong></td>
+            <td>${fmt(totI)}</td>
+            <td>${fmt(totC)}</td>
+            <td>${pct(totI?totC/totI*100:0)}</td>
+            <td>${eur(totC?totS/totC:0)}</td>
+            <td>${eur(totS)}</td>
+            <td>${fmt(totConv,1)}</td>
+            <td>${eur(totCV)}</td>
+            <td>${fmt(totS?totCV/totS:0,2)}</td>
+        </tr>`;
+
+        // --- Channel Table ---
+        const chBody = document.getElementById('channelBody');
+        const chFoot = document.getElementById('channelFoot');
+        let tSess=0, tAU=0, tES=0, tTx=0, tRev=0;
+
+        const chSorted = Object.entries(channels).sort((a,b) => b[1].sessions - a[1].sessions);
+        chSorted.forEach(([name, c]) => {
+            const engRate = c.sessions ? (c.engaged_sessions/c.sessions*100) : 0;
+            const convRate = c.sessions ? (c.transactions/c.sessions*100) : 0;
+            chBody.innerHTML += `<tr>
+                <td>${name}</td>
+                <td>${fmt(c.sessions)}</td>
+                <td>${fmt(c.active_users)}</td>
+                <td>${fmt(c.engaged_sessions)}</td>
+                <td>${pct(engRate,1)}</td>
+                <td>${fmt(c.transactions)}</td>
+                <td>${eur(c.purchase_revenue)}</td>
+                <td>${pct(convRate,1)}</td>
+            </tr>`;
+            tSess += c.sessions; tAU += c.active_users; tES += c.engaged_sessions; tTx += c.transactions; tRev += c.purchase_revenue;
+        });
+        chFoot.innerHTML = `<tr>
+            <td><strong>Totaal</strong></td>
+            <td>${fmt(tSess)}</td>
+            <td>${fmt(tAU)}</td>
+            <td>${fmt(tES)}</td>
+            <td>${pct(tSess?tES/tSess*100:0,1)}</td>
+            <td>${fmt(tTx)}</td>
+            <td>${eur(tRev)}</td>
+            <td>${pct(tSess?tTx/tSess*100:0,1)}</td>
+        </tr>`;
+
+        // --- Charts ---
+        const gridColor = '#eee';
+
+        new Chart(document.getElementById('chartSpendConv'), {
+            type: 'line',
+            data: {
+                labels: shortDates,
+                datasets: [
+                    { label: 'Spend (€)', data: gads_spend, borderColor: '#e17055', backgroundColor: 'rgba(225,112,85,0.1)', fill: true, tension: 0.3, yAxisID: 'y' },
+                    { label: 'Conv. waarde (€)', data: gads_conv_value, borderColor: '#00b894', backgroundColor: 'rgba(0,184,148,0.1)', fill: true, tension: 0.3, yAxisID: 'y1' }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { title: { display: true, text: 'Spend vs. Conversiewaarde' } },
+                scales: {
+                    y: { position: 'left', grid: { color: gridColor }, title: { display: true, text: 'Spend (€)' } },
+                    y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Conv. waarde (€)' } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('chartClicks'), {
+            type: 'bar',
+            data: {
+                labels: shortDates,
+                datasets: [{ label: 'Clicks', data: gads_clicks, backgroundColor: 'rgba(108,92,231,0.6)', borderRadius: 4 }]
+            },
+            options: {
+                responsive: true,
+                plugins: { title: { display: true, text: 'Dagelijkse Clicks' } },
+                scales: { y: { grid: { color: gridColor } } }
+            }
+        });
+
+        new Chart(document.getElementById('chartSessionsRevenue'), {
+            type: 'line',
+            data: {
+                labels: shortDates,
+                datasets: [
+                    { label: 'Sessies', data: ga4_sessions, borderColor: '#6c5ce7', backgroundColor: 'rgba(108,92,231,0.1)', fill: true, tension: 0.3, yAxisID: 'y' },
+                    { label: 'Omzet (€)', data: ga4_revenue, borderColor: '#00b894', backgroundColor: 'rgba(0,184,148,0.1)', fill: true, tension: 0.3, yAxisID: 'y1' }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { title: { display: true, text: 'Sessies vs. Omzet' } },
+                scales: {
+                    y: { position: 'left', grid: { color: gridColor }, title: { display: true, text: 'Sessies' } },
+                    y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Omzet (€)' } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('chartTransactions'), {
+            type: 'bar',
+            data: {
+                labels: shortDates,
+                datasets: [{ label: 'Transacties', data: ga4_transactions, backgroundColor: 'rgba(253,203,110,0.7)', borderRadius: 4 }]
+            },
+            options: {
+                responsive: true,
+                plugins: { title: { display: true, text: 'Dagelijkse Transacties' } },
+                scales: { y: { grid: { color: gridColor } } }
+            }
+        });
+    </script>
+</body>
+</html>
